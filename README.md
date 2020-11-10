@@ -6,3 +6,6 @@ AWS로 구입한 서버와 연동하는 웹사이트 제작. 클라이언트가 
 사용한 module: 
     CSS 디자인 관련은 'bootstrap' , 'google font' , 서버와의 통신은 'ajax' , 'requests'
 
+도메인으로도 접속 가능하다. 주소 - 'binjinoh.shop'
+
+    site's domain address - 'binjinoh.shop'
