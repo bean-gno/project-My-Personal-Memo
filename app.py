@@ -3,9 +3,8 @@ from pymongo import MongoClient
 
 app = Flask(__name__)
 
-client = MongoClient('localhost', 27017)
+client = MongoClient('', 27017)
 db = client.dbjungle
-# db.memo.insert_one({'num': 0, 'title': 'example', 'content': 'content_example'})
 
 @app.route('/')
 def home():
@@ -14,15 +13,17 @@ def home():
 @app.route('/api/read', methods=['GET'])
 def read_articles():
 
-    result = list(db.memo.find({}, {'_id': 0})) #id도 받아온다!
+    result = list(db.memo.find({}, {'_id': 0}))
 
     return jsonify({'result': 'success', 'articles': result})
 
 @app.route('/api/post', methods=['POST'])
 def post_article():
+    memo_num = db.memo.count()
+    memo_num += 1
     memo_title_receive = request.form['memo_title_give']
     memo_content_receive = request.form['memo_content_give']
-    memo = {'title': memo_title_receive, 'content': memo_content_receive}
+    memo = {'title': memo_title_receive, 'content': memo_content_receive, 'num': memo_num}
 
     db.memo.insert_one(memo)
 
@@ -30,19 +31,18 @@ def post_article():
 
 @app.route('/api/update', methods=['POST'])
 def update_article():
-    title_original = request.form['title_original_give']
+    memo_num_receive = int(request.form['memo_num_give'])
     title_receive = request.form['memo_title_give']
     content_receive = request.form['memo_content_give']
 
-    #각각의 메모가 타이틀이 달라야 올바른 검색이 가능하다는 것은 조금 아쉽다. db의 id로 연결해야 하는 것이 맞는 것 같은데...
-    db.memo.update_one({'title': title_original}, {'$set': {'title': title_receive}})
-    db.memo.update_one({'title': title_original}, {'$set': {'content': content_receive}})
+    db.memo.update_one({'num': memo_num_receive}, {'$set': {'title': title_receive}})
+    db.memo.update_one({'num': memo_num_receive}, {'$set': {'content': content_receive}})
     return jsonify({'result': 'success', 'msg': 'update 성공!'})
 
 @app.route('/api/delete', methods=['POST'])
 def delete_article():
-    memo_title_receive = request.form['memo_title']
-    db.memo.delete_one({'title': memo_title_receive})
+    memo_num_receive = int(request.form['num_give'])
+    db.memo.delete_one({'num': memo_num_receive})
 
     return jsonify({'result': 'success', 'msg': 'delete 성공!'})
 
