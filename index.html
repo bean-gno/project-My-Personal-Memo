@@ -20,7 +20,7 @@
     <!-- 구글폰트 -->
     <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
 
-    <title>SW사관학교 정글|binjinoh's memojang2</title>
+    <title>메모장2</title>
 
     <style type="text/css">
         * {
@@ -32,10 +32,11 @@
             margin: auto;
         }
 
-        .wrap-post-box{
+        .wrap-post-box {
             width: 400px;
             margin-top: 30px;
         }
+
         .form-post {
             width: 500px;
         }
@@ -48,192 +49,7 @@
         let update = false;
         $(document).ready(function () {
             $('#cards-box').html("")
-            showArticles(update, -1);
-        });
-
-        function showArticles(update, num) {
-            $('#cards-box').empty()
-            $.ajax({
-                type: "GET",
-                url: "/api/read",
-                data: {},
-                success: function (response) {
-                    let memo_all = response["articles"];
-                    if (update == false) {                                    //없어도 작동하는 if구절
-                        for (let i = 0; i < memo_all.length; i++) {
-                            let memo = memo_all[i];
-                            let title = memo['title'];
-                            let content = memo['content'];
-                            makeCard(title, content, i);
-                        }
-                    } else if (update == true) {
-                        for (let i = 0; i < memo_all.length; i++) {
-                            let memo = memo_all[i];
-                            let title = memo['title'];
-                            let content = memo['content'];
-                            if (i == num) {
-                                makeForm(title, content, i);
-                            } else {
-                                makeCard(title, content, i);
-                            }
-                        }
-                    }
-                }
-            })
-        }
-
-        function makeCard(title, content, num) {
-            let temp_html = `<div class="card" id="card number${num}">
-                                <div class="card-body">
-                                <h3 id="memo_title" class="card-title">${title}</h3>
-                                <h4 id="memo_content" class="card-text">${content}</h4>
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="updateArticle(${num})">수정</button>
-                                <button type="button" class="btn btn-dark btn-sm" onclick="deleteArticle('${title}')">삭제</button>
-                                </div>
-                             </div>`;
-
-            $("#cards-box").append(temp_html);
-        }
-
-        function makeForm(memo_title, content, num) {
-            let temp_html = `<div class="card" id="card number${num}">
-                                <div class="card-body">
-                                    <form>
-                                        <div class="form-group">
-                                            <textarea type="text" class="form-control" id="memo_title_change" rows="1">${memo_title}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <textarea type="text" class="form-control" id="memo_content_change" rows="3">${content}</textarea>
-                                        </div>
-                                        <button type="button" class="btn btn-primary btn-sm" onclick="save_updatedArticle('${memo_title}')">저장</button>
-                                    </form>
-                                </div>
-                            </div>`;
-            $('#cards-box').append(temp_html);
-        }
-
-        function postArticle(memo_title) {
-            let changed_memo_title = $('#post-title').val();
-            let changed_memo_content = $('#post-content').val();
-            $.ajax({
-                type: "POST",
-                url: "/api/post",
-                data: {
-                    original_title_give: memo_title,
-                    memo_title_give: changed_memo_title,
-                    memo_content_give: changed_memo_content
-                },
-                success: function (response) {
-                    if (response["result"] == "success") {
-                        alert("포스팅 성공!");
-                        window.location.reload();
-                    } else {
-                        alert("서버 오류!");
-                    }
-                }
-            })
-        }
-
-        function updateArticle(num) {
-            update = true;
-            showArticles(update, num);
-        }
-
-        function save_updatedArticle(memo_title) {
-            let changed_title = $('#memo_title_change').val();
-            let changed_content = $('#memo_content_change').val();
-            $.ajax({
-                type: "POST",
-                url: "/api/update",
-                data: {
-                    'title_original_give': memo_title,
-                    'memo_title_give': changed_title,
-                    'memo_content_give': changed_content
-                },
-                success: function (response) {
-                    if (response["result"] == "success") {
-                        alert(response['msg']);
-                    }
-                }
-            })
-            update = false;
-            window.location.reload();
-        }
-
-        function deleteArticle(title) {
-            $.ajax({
-                type: "POST",
-                url: "/api/delete",
-                data: {'memo_title': title},
-                success: function (response) {
-                    if (response["result"] == "success") {
-                        alert(response['msg']);
-                    }
-                }
-            })
-            window.location.reload();
-        }
-
-    </script>
-</head>
-
-<body>
-<div class="wrap">
-    <div class="jumbotron">
-        <h1>나홀로메모장 <span class="badge badge-secondary">ver2.0</span></h1>
-        </h1>
-        <div class="wrap-post-box">
-            <div id="post-box" class="form-post">
-<!DOCTYPE html>
-<html lang="ko">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
-
-    <!-- JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-
-    <!-- 구글폰트 -->
-    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
-
-    <title>SW사관학교 정글|binjinoh's memojang2</title>
-
-    <style type="text/css">
-        * {
-            font-family: "Stylish", sans-serif;
-        }
-
-        .wrap {
-            width: 1500px;
-            margin: auto;
-        }
-
-        .wrap-post-box{
-            width: 400px;
-            margin-top: 30px;
-        }
-        .form-post {
-            width: 500px;
-        }
-
-        #post-box {
-        }
-
-    </style>
-    <script>
-        let update = false;
-        $(document).ready(function () {
-            $('#cards-box').html("")
-            showArticles(update, -1);
+            showArticles(update,-1);
         });
 
         function showArticles(update, num) {
@@ -249,17 +65,19 @@
                             let memo = memo_all[i];
                             let title = memo['title'];
                             let content = memo['content'];
-                            makeCard(title, content, i);
+                            let memo_num = memo['num'];
+                            makeCard(title, content, memo_num);
                         }
                     } else if (update == true) {
                         for (let i = 0; i < memo_all.length; i++) {
                             let memo = memo_all[i];
                             let title = memo['title'];
                             let content = memo['content'];
-                            if (i == num) {
-                                makeForm(title, content, i);
+                            let memo_num = memo['num']
+                            if (num == memo_num) {
+                                makeForm(title, content, memo_num);
                             } else {
-                                makeCard(title, content, i);
+                                makeCard(title, content, memo_num);
                             }
                         }
                     }
@@ -267,21 +85,21 @@
             })
         }
 
-        function makeCard(title, content, num) {
-            let temp_html = `<div class="card" id="card number${num}">
+        function makeCard(title, content, memo_num) {
+            let temp_html = `<div class="card" id="card number${memo_num}">
                                 <div class="card-body">
                                 <h3 id="memo_title" class="card-title">${title}</h3>
                                 <h4 id="memo_content" class="card-text">${content}</h4>
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="updateArticle('${num}')">수정</button>
-                                <button type="button" class="btn btn-dark btn-sm" onclick="deleteArticle('${title}')">삭제</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="updateArticle(${memo_num})">수정</button>
+                                <button type="button" class="btn btn-dark btn-sm" onclick="deleteArticle(${memo_num})">삭제</button>
                                 </div>
                              </div>`;
 
             $("#cards-box").append(temp_html);
         }
 
-        function makeForm(memo_title, content, num) {
-            let temp_html = `<div class="card" id="card number${num}">
+        function makeForm(memo_title, content, memo_num) {
+            let temp_html = `<div class="card" id="card number${memo_num}">
                                 <div class="card-body">
                                     <form>
                                         <div class="form-group">
@@ -290,7 +108,7 @@
                                         <div class="form-group">
                                             <textarea type="text" class="form-control" id="memo_content_change" rows="3">${content}</textarea>
                                         </div>
-                                        <button type="button" class="btn btn-primary btn-sm" onclick="save_updatedArticle('${memo_title}')">저장</button>
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="save_updatedArticle(${memo_num})">저장</button>
                                     </form>
                                 </div>
                             </div>`;
@@ -319,37 +137,38 @@
             })
         }
 
-        function updateArticle(num) {
+        function updateArticle(memo_num) {
+          //  console.log(typeof memo_num);
             update = true;
-            showArticles(update, num);
+            showArticles(update, memo_num);
         }
 
-        function save_updatedArticle(memo_title) {
+        function save_updatedArticle(memo_num) {
             let changed_title = $('#memo_title_change').val();
             let changed_content = $('#memo_content_change').val();
             $.ajax({
                 type: "POST",
                 url: "/api/update",
                 data: {
-                    'title_original_give': memo_title,
                     'memo_title_give': changed_title,
-                    'memo_content_give': changed_content
+                    'memo_content_give': changed_content,
+                    'memo_num_give': memo_num
                 },
                 success: function (response) {
-                    if (response["result"] == "success") {
+                    if (response['result'] == 'success') {
                         alert(response['msg']);
                     }
                 }
             })
             update = false;
-            window.location.reload()
+            window.location.reload();
         }
 
-        function deleteArticle(title) {
+        function deleteArticle(num) {
             $.ajax({
                 type: "POST",
                 url: "/api/delete",
-                data: {'memo_title': title},
+                data: {'num_give': num},
                 success: function (response) {
                     if (response["result"] == "success") {
                         alert(response['msg']);
