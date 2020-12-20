@@ -43,15 +43,16 @@
 
         #post-box {
         }
-
+        
     </style>
     <script>
+//      setting up the first page loading
         let update = false;
         $(document).ready(function () {
             $('#cards-box').html("")
             showArticles(update,-1);
         });
-
+//      function for getting the data and rendering the memocards
         function showArticles(update, num) {
             $('#cards-box').empty()
             $.ajax({
@@ -84,7 +85,7 @@
                 }
             })
         }
-
+//      Creating memo cards to show on page
         function makeCard(title, content, memo_num) {
             let temp_html = `<div class="card" id="card number${memo_num}">
                                 <div class="card-body">
@@ -97,7 +98,7 @@
 
             $("#cards-box").append(temp_html);
         }
-
+//      function for changing the memo into an alterable form for edit
         function makeForm(memo_title, content, memo_num) {
             let temp_html = `<div class="card" id="card number${memo_num}">
                                 <div class="card-body">
@@ -114,7 +115,7 @@
                             </div>`;
             $('#cards-box').append(temp_html);
         }
-
+//      memo saving on db
         function postArticle(memo_title) {
             let changed_memo_title = $('#post-title').val();
             let changed_memo_content = $('#post-content').val();
@@ -142,7 +143,7 @@
             update = true;
             showArticles(update, memo_num);
         }
-
+//      server communciation to update changes on db
         function save_updatedArticle(memo_num) {
             let changed_title = $('#memo_title_change').val();
             let changed_content = $('#memo_content_change').val();
@@ -163,7 +164,7 @@
             update = false;
             window.location.reload();
         }
-
+//      delete article on db
         function deleteArticle(num) {
             $.ajax({
                 type: "POST",
@@ -183,6 +184,7 @@
 
 <body>
 <div class="wrap">
+<!--  section for the title block -->
     <div class="jumbotron">
         <h1>나홀로메모장 <span class="badge badge-secondary">ver2.0</span></h1>
         </h1>
@@ -200,7 +202,7 @@
             </div>
         </div>
     </div>
-
+<!-- section for memo cards -->
     <div id="cards-box" class="card-columns">
         <div class="card">
             <div class="card-body">
